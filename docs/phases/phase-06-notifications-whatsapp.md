@@ -1,0 +1,56 @@
+# Phase 6 — Notifications & WhatsApp
+
+Status: NOT_STARTED
+Started at:
+Completed at:
+
+## Objective
+
+Implementasikan in-app notifications dengan unread badge, trigger notifikasi untuk berbagai state PO, serta sharing ringkasan PO ke WhatsApp dengan deep link.
+
+## Scope
+
+- [ ] Schema `notifications`
+- [ ] In-app notification provider & component
+- [ ] Notification triggers (PO sent, accepted, reconfirmation, deadline H-1, deadline overdue, waiting approval, revision, completed, cancelled)
+- [ ] Unread status & Mark all as read
+- [ ] Deep links from notification to detail PO
+- [ ] Copy PO summary text
+- [ ] WhatsApp share button with formatting
+- [ ] Deep link route handler
+
+## Acceptance Criteria
+
+- [ ] Notifikasi masuk ke database sesuai trigger
+- [ ] User vendor menerima notifikasi PO baru, rekonfirmasi, revisi, approval
+- [ ] Owner/admin menerima notifikasi PO diterima, waiting approval, deadline overdue
+- [ ] Badge unread berubah secara realtime/refresh
+- [ ] Deep link mengarahkan pengguna ke halaman target setelah login
+- [ ] WhatsApp share memformat teks ringkasan dengan benar (PO number, vendor, total, deadline, link)
+
+## Files Changed
+
+- Belum ada.
+
+## Database Changes
+
+- Belum ada.
+
+## Verification
+
+- [ ] Lint
+- [ ] Type-check
+- [ ] Component tests (notification list, WhatsApp share format)
+- [ ] Production build
+
+## Decisions
+
+- Belum ada.
+
+## Blockers
+
+- Tidak ada.
+
+## Handoff / Next Step
+
+- Belum ada.
