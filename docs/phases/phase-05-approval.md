@@ -1,7 +1,7 @@
 # Phase 5 — Approval
 
-Status: NOT_STARTED
-Started at:
+Status: IN_PROGRESS
+Started at: 2026-07-29
 Completed at:
 
 ## Objective
