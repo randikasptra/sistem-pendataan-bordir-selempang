@@ -26,49 +26,33 @@ create table if not exists public.profiles (
 alter table public.profiles enable row level security;
 alter table public.vendors enable row level security;
 
--- RLS Policies for profiles table
--- Owner can see all profiles
-create policy "owner_see_all_profiles"
-  on public.profiles for select
-  using (
-    (select role from public.profiles where id = auth.uid()) = 'owner'
-  );
+-- Recreate policies so this migration is safe to run again.
+drop policy if exists "owner_see_all_profiles" on public.profiles;
+create policy "owner_see_all_profiles" on public.profiles for select
+using ((select role from public.profiles where id = auth.uid()) = 'owner');
 
--- Admin can see all profiles
-create policy "admin_see_all_profiles"
-  on public.profiles for select
-  using (
-    (select role from public.profiles where id = auth.uid()) = 'admin'
-  );
+drop policy if exists "admin_see_all_profiles" on public.profiles;
+create policy "admin_see_all_profiles" on public.profiles for select
+using ((select role from public.profiles where id = auth.uid()) = 'admin');
 
--- Vendor can only see profiles with same vendor_id
-create policy "vendor_see_same_vendor_profiles"
-  on public.profiles for select
-  using (
-    (select role from public.profiles where id = auth.uid()) = 'vendor'
-    and vendor_id = (select vendor_id from public.profiles where id = auth.uid())
-  );
+drop policy if exists "vendor_see_same_vendor_profiles" on public.profiles;
+create policy "vendor_see_same_vendor_profiles" on public.profiles for select
+using (
+  (select role from public.profiles where id = auth.uid()) = 'vendor'
+  and vendor_id = (select vendor_id from public.profiles where id = auth.uid())
+);
 
--- Users can see their own profile
-create policy "users_see_own_profile"
-  on public.profiles for select
-  using (id = auth.uid());
+drop policy if exists "users_see_own_profile" on public.profiles;
+create policy "users_see_own_profile" on public.profiles for select
+using (id = auth.uid());
 
--- RLS Policies for vendors table
--- Everyone can read vendors
-create policy "anyone_read_vendors"
-  on public.vendors for select
-  using (true);
+drop policy if exists "anyone_read_vendors" on public.vendors;
+create policy "anyone_read_vendors" on public.vendors for select using (true);
 
--- Only owner/admin can insert/update vendors
-create policy "owner_admin_modify_vendors"
-  on public.vendors for insert
-  with check (
-    (select role from public.profiles where id = auth.uid()) in ('owner', 'admin')
-  );
+drop policy if exists "owner_admin_modify_vendors" on public.vendors;
+create policy "owner_admin_modify_vendors" on public.vendors for insert
+with check ((select role from public.profiles where id = auth.uid()) in ('owner', 'admin'));
 
-create policy "owner_admin_update_vendors"
-  on public.vendors for update
-  using (
-    (select role from public.profiles where id = auth.uid()) in ('owner', 'admin')
-  );
+drop policy if exists "owner_admin_update_vendors" on public.vendors;
+create policy "owner_admin_update_vendors" on public.vendors for update
+using ((select role from public.profiles where id = auth.uid()) in ('owner', 'admin'));

@@ -3,10 +3,10 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { publicEnv } from '@/lib/env'
 
 /**
- * Middleware to refresh Supabase sessions and protect routes based on authentication.
- * Runs on every request to ensure session tokens are valid.
+ * Refreshes Supabase sessions and protects routes based on authentication.
+ * Runs before each matching request to keep session cookies current.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -32,16 +32,15 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session if needed
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') ||
-                     request.nextUrl.pathname.startsWith('/forgot-password')
+  const isAuthPage =
+    request.nextUrl.pathname.startsWith('/login') ||
+    request.nextUrl.pathname.startsWith('/forgot-password')
   const isProtectedRoute = !isAuthPage && request.nextUrl.pathname !== '/'
 
-  // Redirect unauthenticated users to login
   if (!user && isProtectedRoute) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
@@ -49,7 +48,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Redirect authenticated users away from auth pages
   if (user && isAuthPage) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/'
@@ -61,13 +59,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

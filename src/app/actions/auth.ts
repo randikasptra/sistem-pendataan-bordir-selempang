@@ -1,5 +1,6 @@
 'use server'
 
+import { publicEnv } from '@/lib/env'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -30,7 +31,7 @@ export async function resetPassword(email: string) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback?next=/update-password`,
+    redirectTo: `${publicEnv.APP_URL}/auth/callback?next=/update-password`,
   })
 
   if (error) {

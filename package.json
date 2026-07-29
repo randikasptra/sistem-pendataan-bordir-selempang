@@ -2,11 +2,15 @@
   "name": "vendor-bordir-selempang",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "type-check": "tsc --noEmit",
+    "seed:auth": "node --env-file=.env.local --experimental-strip-types scripts/seed-auth.ts",
+    "smoke:auth": "node --env-file=.env.local --experimental-strip-types scripts/smoke-auth.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

@@ -1,4 +1,4 @@
-# Phase 1 — Foundation
+# Phase 1 - Foundation
 
 Status: COMPLETED
 Started at: 2026-07-29
@@ -6,71 +6,60 @@ Completed at: 2026-07-29
 
 ## Objective
 
-Membangun fondasi teknis project: Next.js App Router dengan TypeScript strict mode, Tailwind CSS, integrasi Supabase (client server/browser), sistem autentikasi dengan role-based access control, struktur layout responsive, migration awal, dan seed development.
+Build the technical foundation: Next.js App Router with TypeScript strict mode, Tailwind CSS, Supabase integration, role-based authentication, responsive layouts, and Cloud-verified development seed data.
 
 ## Scope
 
-- [x] Inisialisasi Next.js + TypeScript + Tailwind
-- [x] Setup environment validation (Zod)
-- [x] Setup Supabase client server/browser
-- [x] Auth dengan Supabase Auth
-- [x] Protected routes dan middleware
-- [x] Role-based access (owner, admin, vendor)
-- [x] Struktur layout desktop/mobile
-- [x] Halaman Login dan Forgot Password
-- [x] Root redirect berdasarkan role
-- [x] Migration awal (tabel profiles, vendors)
-- [x] Seed data development
+- [x] Next.js + TypeScript + Tailwind initialization
+- [x] Zod environment validation
+- [x] Supabase client, server, and trusted admin wrappers
+- [x] Auth, protected routes, and role-based access
+- [x] Responsive desktop/mobile layout
+- [x] Login and forgot-password pages
+- [x] Root redirect by role
+- [x] Initial schema and idempotent development Auth seed
 
 ## Acceptance Criteria
 
-- [x] `npx next build` berhasil tanpa error
-- [x] TypeScript strict mode tidak ada error
-- [x] Lint bersih
-- [x] Login dengan Supabase Auth berfungsi
-- [x] Middleware memblokir akses halaman protected tanpa login
-- [x] Role diambil dari database, bukan dari client
-- [x] Owner/admin diarahkan ke `/dashboard` setelah login
-- [x] Vendor diarahkan ke `/vendor/dashboard` setelah login
-- [x] Halaman `/login` dan `/forgot-password` dapat diakses
-- [x] Layout responsif (mobile-first)
-- [x] Migration dapat dijalankan ulang secara idempoten
+- [x] Lint, strict type-check, and production build pass.
+- [x] Supabase Cloud migration and API privileges are applied.
+- [x] Owner, admin, and vendor development accounts are seeded idempotently.
+- [x] Owner/admin redirect to `/dashboard`; vendor redirects to `/vendor/dashboard`.
+- [x] Vendor cannot open the internal dashboard; owner/admin cannot open the vendor dashboard.
+- [x] Profiles RLS prevents a vendor from reading profiles outside its vendor scope.
 
 ## Files Changed
 
-- `src/lib/env.ts` (Zod environment validation)
-- `src/lib/supabase/client.ts`, `server.ts`, `admin.ts` (Supabase wrappers)
-- `src/middleware.ts` (Session refresh & route protection)
-- `src/lib/auth.ts` (Role-based access utilities)
-- `src/app/(app)/layout.tsx` (Authenticated dashboard layout with sidebar/bottom-nav)
-- `src/app/login/page.tsx` & `src/app/forgot-password/page.tsx` (Auth pages)
-- `src/app/(app)/dashboard/page.tsx` & `src/app/(app)/vendor/dashboard/page.tsx` (Role-specific dashboards)
-- `src/app/auth/callback/route.ts` (Supabase auth callback handler)
+- `src/lib/env.ts`, `src/lib/supabase/*`, `src/lib/auth.ts`
+- `src/proxy.ts`, `src/app/actions/auth.ts`, and Phase 1 app pages/layouts
+- `scripts/seed-auth.ts` and `scripts/smoke-auth.ts`
+- `.env.example` and `package.json`
 
 ## Database Changes
 
-- `supabase/migrations/001_init_schema.sql` (Creates `vendors` and `profiles` tables with RLS policies)
-- `supabase/seed.sql` (Initial development seed for vendors)
+- `001_init_schema.sql`: `vendors` and `profiles` with idempotent policies.
+- `002_grant_phase_1_api_access.sql`: minimum API privileges while retaining RLS.
+- `003_fix_profiles_rls_recursion.sql`: scalar `SECURITY DEFINER` helpers to avoid recursive policies.
+- `seed-auth.ts` upserts vendor `GRADMINE`, three Auth users, and their matching profiles.
 
 ## Verification
 
-- [x] Lint: Berhasil (0 error, 0 warning setelah perbaikan)
-- [x] Type-check: Berhasil (`npx tsc --noEmit` bersih)
-- [x] Unit/integration tests: (Belum ada untuk Phase 1)
-- [x] Production build: Berhasil (next build selesai dalam ~10s)
+- [x] Lint: `npm run lint`
+- [x] Type-check: `npm run type-check`
+- [x] Smoke test: `npm run seed:auth` (rerun idempotently) and `npm run smoke:auth`
+- [x] Production build: `npm run build`
 
 ## Decisions
 
-- Menggunakan route group `(app)` untuk otomatis mengaplikasikan layout beranda yang dilindungi autentikasi.
-- Halaman `/login` dan `/forgot-password` diletakkan di luar route group `(app)` agar menggunakan root layout sederhana.
-- `useSearchParams` pada form login dibungkus `<Suspense>` agar Next.js tidak gagal saat static prerendering.
-- Supabase Admin client (`admin.ts`) dilindungi dengan `'server-only'` import untuk mencegah kebocoran credential di client.
+- Use `proxy.ts` for session refresh and optimistic redirects, matching the Next.js 16 convention.
+- Keep service-role access server-only; seed reads all account email/password values only from environment.
+- Use scalar `SECURITY DEFINER` helpers for policy role/vendor lookup so RLS cannot recursively evaluate `profiles`.
 
 ## Blockers
 
-- Tidak ada.
+- None.
 
 ## Handoff / Next Step
 
-- Fase 1 (Foundation) selesai.
-- Selanjutnya, jalankan **Phase 2 — Users & Vendors** yang akan mengimplementasikan CRUD vendor, pembuatan user internal, dan validasi hubungan user-vendor dengan RLS.
+- Phase 1 is complete and verified against Supabase Cloud.
+- Start Phase 2 - Users & Vendors after this Phase 1 commit is pushed.
