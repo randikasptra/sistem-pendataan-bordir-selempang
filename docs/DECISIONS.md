@@ -22,3 +22,10 @@ Schema awal diterapkan di Supabase Cloud untuk smoke test Auth dan role-based ac
 2. Mengganti policy yang membaca `public.profiles` secara langsung dengan fungsi `SECURITY DEFINER` yang hanya mengembalikan role atau `vendor_id` pengguna saat ini, untuk menghindari recursive policy evaluation.
 3. Menggunakan `proxy.ts` sesuai konvensi Next.js 16 untuk refresh session dan redirect optimistis.
 4. Menyediakan seed dan smoke test yang membaca seluruh akun development dari environment tanpa hard-code credential.
+
+## [2026-07-29] Manajemen user dan isolasi vendor Fase 2
+
+### Keputusan
+1. Pembuatan user memakai Supabase invitation email agar password selalu dibuat penerima, bukan oleh aplikasi.
+2. Akses manajemen user memerlukan owner atau admin dengan `can_manage_users`; akses vendor management tersedia bagi owner/admin.
+3. Vendor hanya dapat membaca record vendor dan profile yang terhubung pada `vendor_id` sendiri. Pengujian integration membuat data sementara dan membersihkannya kembali.

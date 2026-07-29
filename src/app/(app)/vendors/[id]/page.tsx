@@ -1,0 +1,10 @@
+import { updateVendor } from '@/app/actions/management'
+import { requireVendorManagement } from '@/lib/management-auth'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { notFound } from 'next/navigation'
+
+export default async function VendorDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; success?: string }> }) {
+  await requireVendorManagement(); const { id } = await params; const notice = await searchParams
+  const { data: vendor } = await createAdminClient().from('vendors').select('*').eq('id', id).maybeSingle(); if (!vendor) notFound()
+  return <main className="mx-auto max-w-2xl space-y-6 p-4 sm:p-6 lg:p-8"><div><p className="text-sm font-medium text-blue-600">Manajemen vendor</p><h1 className="text-3xl font-bold">{vendor.name}</h1></div>{notice.error && <p className="rounded bg-red-50 p-3 text-sm text-red-800">{notice.error}</p>}{notice.success && <p className="rounded bg-green-50 p-3 text-sm text-green-800">{notice.success}</p>}<form action={updateVendor} className="space-y-4 rounded-xl border bg-white p-5 shadow-sm dark:bg-gray-950"><input type="hidden" name="id" value={vendor.id}/><label className="block text-sm">Kode<input name="code" required defaultValue={vendor.code} className="mt-1 w-full rounded border p-2"/></label><label className="block text-sm">Nama<input name="name" required defaultValue={vendor.name} className="mt-1 w-full rounded border p-2"/></label><label className="block text-sm">WhatsApp<input name="whatsapp" defaultValue={vendor.whatsapp ?? ''} className="mt-1 w-full rounded border p-2"/></label><label className="block text-sm">Catatan<input name="notes" defaultValue={vendor.notes ?? ''} className="mt-1 w-full rounded border p-2"/></label><label className="flex gap-2 text-sm"><input type="checkbox" name="is_active" defaultChecked={vendor.is_active}/> Vendor aktif</label><button className="rounded bg-blue-600 px-4 py-2 font-medium text-white">Simpan perubahan</button></form></main>
+}

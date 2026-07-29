@@ -1,7 +1,7 @@
 # Project Progress
 
-Last updated: 2026-07-29 18:15
-Current phase: Phase 1 - Foundation
+Last updated: 2026-07-29 19:00
+Current phase: Phase 2 - Users & Vendors
 Overall status: COMPLETED
 
 ## Phase Status
@@ -9,7 +9,7 @@ Overall status: COMPLETED
 | Phase | Status | Progress | Verification |
 |---|---|---:|---|
 | 1. Foundation | COMPLETED | 100% | Passed (Cloud smoke test) |
-| 2. Users & Vendors | NOT_STARTED | 0% | Not run |
+| 2. Users & Vendors | COMPLETED | 100% | Passed (Cloud RLS test) |
 | 3. Purchase Orders | NOT_STARTED | 0% | Not run |
 | 4. Image Editor | NOT_STARTED | 0% | Not run |
 | 5. Approval | NOT_STARTED | 0% | Not run |
@@ -18,13 +18,13 @@ Overall status: COMPLETED
 
 ## Current Work
 
-- Current task: Phase 1 Cloud smoke test and verification completed.
+- Current task: Phase 2 completed and verified.
 - Blocker: None.
-- Next action: Commit and push Phase 1, then start Phase 2 per user instruction.
+- Next action: Stop before Phase 3 and await user direction.
 
 ## Latest Verification
 
 - Lint: Passed (`npm run lint`)
 - Type-check: Passed (`npm run type-check`)
-- Tests: Passed (`npm run smoke:auth`; Auth, role redirects, and RLS)
+- Tests: Passed (`npm run test:rls`)
 - Production build: Passed (`npm run build`)
