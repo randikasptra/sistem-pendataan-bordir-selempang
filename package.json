@@ -11,7 +11,9 @@
     "type-check": "tsc --noEmit",
     "seed:auth": "node --env-file=.env.local --experimental-strip-types scripts/seed-auth.ts",
     "smoke:auth": "node --env-file=.env.local --experimental-strip-types scripts/smoke-auth.ts",
-    "test:rls": "node --env-file=.env.local --experimental-strip-types scripts/test-rls.ts"
+    "test:rls": "node --env-file=.env.local --experimental-strip-types scripts/test-rls.ts",
+    "test:po-utils": "node --env-file=.env.local --experimental-strip-types scripts/test-po-utils.ts",
+    "test:po-rls": "node --env-file=.env.local --experimental-strip-types scripts/test-po-rls.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

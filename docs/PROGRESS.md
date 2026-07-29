@@ -1,7 +1,7 @@
 # Project Progress
 
-Last updated: 2026-07-29 19:00
-Current phase: Phase 2 - Users & Vendors
+Last updated: 2026-07-29 21:30
+Current phase: Phase 3 - Purchase Orders
 Overall status: COMPLETED
 
 ## Phase Status
@@ -10,7 +10,7 @@ Overall status: COMPLETED
 |---|---|---:|---|
 | 1. Foundation | COMPLETED | 100% | Passed (Cloud smoke test) |
 | 2. Users & Vendors | COMPLETED | 100% | Passed (Cloud RLS test) |
-| 3. Purchase Orders | NOT_STARTED | 0% | Not run |
+| 3. Purchase Orders | COMPLETED | 100% | Passed |
 | 4. Image Editor | NOT_STARTED | 0% | Not run |
 | 5. Approval | NOT_STARTED | 0% | Not run |
 | 6. Notifications & WhatsApp | NOT_STARTED | 0% | Not run |
@@ -18,9 +18,9 @@ Overall status: COMPLETED
 
 ## Current Work
 
-- Current task: Phase 2 completed and verified.
+- Current task: Phase 3 completed. Ready to proceed to Phase 4 - Image Editor.
 - Blocker: None.
-- Next action: Stop before Phase 3 and await user direction.
+- Next action: Begin Phase 4 implementation.
 
 ## Latest Verification
 
@@ -28,3 +28,11 @@ Overall status: COMPLETED
 - Type-check: Passed (`npm run type-check`)
 - Tests: Passed (`npm run test:rls`)
 - Production build: Passed (`npm run build`)
+
+## Known Issues
+
+1. Indikator Next.js development menampilkan “1 Issue” dan perlu diaudit.
+2. Pesan kegagalan undangan pengguna perlu dibuat lebih spesifik.
+3. Konsistensi daftar vendor owner/admin perlu diverifikasi.
+4. Validasi staf vendor tanpa vendor_id perlu diuji manual.
+5. Label navigasi masih bercampur Bahasa Inggris dan Indonesia.
