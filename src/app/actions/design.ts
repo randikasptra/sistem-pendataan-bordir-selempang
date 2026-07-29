@@ -9,9 +9,7 @@ import { revalidatePath } from 'next/cache'
  */
 export async function saveDesignVersion(
   itemId: string,
-  canvasJson: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  previewUrl: string
+  canvasJson: string
 ) {
   const currentUser = await requireRole(['owner', 'admin'])
   const supabase = await createClient()
@@ -61,7 +59,7 @@ export async function saveDesignVersion(
  * Load latest design version for an item
  */
 export async function loadDesignVersion(itemId: string) {
-  const currentUser = await requireRole(['owner', 'admin'])
+  await requireRole(['owner', 'admin'])
   const supabase = await createClient()
 
   const { data: designVersion, error } = await supabase
@@ -88,7 +86,6 @@ export async function uploadAttachment(
   type: 'reference' | 'overlay' | 'preview' | 'vendor_result',
   formData: FormData
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentUser = await requireRole(['owner', 'admin'])
   const supabase = await createClient()
 

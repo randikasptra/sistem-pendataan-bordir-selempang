@@ -28,9 +28,10 @@ export default function EditorWrapper({
   const [saving, setSaving] = useState(false)
 
   const handleSave = async (canvasJson: string, preview: Blob) => {
+    void preview
     setSaving(true)
     try {
-      await saveDesignVersion(itemId, canvasJson, '')
+      await saveDesignVersion(itemId, canvasJson)
       alert('Desain berhasil disimpan!')
       router.refresh()
     } catch (error) {
