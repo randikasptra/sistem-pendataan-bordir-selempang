@@ -66,3 +66,25 @@ Implementasi penuh schema PO, items, activity logs, notifications, dan workflow 
 ### Trade-offs
 - Single-item form creation: Memerlukan multiple create untuk multi-item PO (acceptable untuk MVP, dapat ditingkatkan kemudian).
 - Test requires migration deployment: RLS integration test memerlukan migration diterapkan ke Supabase Cloud sebelum dapat dijalankan (expected, bukan blocker).
+
+## [2026-07-29] Image Editor & Annotation Infrastructure Fase 4
+
+### Keputusan
+1. **Fabric.js Integration via Client-Side Dynamic Import**: Mengimpor Fabric.js secara dinamis pada client-side (`use client` dengan dynamic import `ssr: false`) untuk menghindari kegagalan SSR Next.js yang mencoba memuat objek browser global seperti `document` atau `window` di server-side.
+
+2. **Lightweight Canvas JSON Versioning**: Menyimpan state canvas sebagai representasi JSON ringan di database (`design_versions.canvas_json`) alih-alih me-render dan menyimpan gambar flat PNG resolusi penuh pada setiap modifikasi. File preview gambar hanya di-generate saat dibutuhkan (misal ekspor hasil akhir atau submission).
+
+3. **Client-Side Image Pre-Processing & Compression**: Sebelum diunggah ke storage, gambar referensi diproses terlebih dahulu di browser menggunakan Canvas 2D API untuk di-resize dan dikompresi ke format WebP guna membatasi memori di mobile phone dan menghemat storage bandwidth.
+
+4. **Immutable Original Reference Images**: File referensi gambar yang diunggah pertama kali disimpan sebagai aset yang bersifat read-only (immutable). Semua revisi, catatan overlay, dan coretan disimpan dalam layer terpisah (`design_versions` dan attachments sekunder) sehingga gambar asli tidak pernah tertimpa.
+
+5. **Storage Isolation via Storage-RLS**: Konfigurasi keamanan file di bucket Supabase Storage mengikuti aturan isolasi PO. Vendor hanya dapat mengunggah file hasil (`type = 'vendor_result'`) ke prefix direktori yang didedikasikan (`po/{poId}/vendor-results/*`), sedangkan akses baca untuk attachment PO dibatasi hanya untuk vendor yang bersangkutan menggunakan policy yang mencocokkan profiles.vendor_id.
+
+### Alasan
+- Fabric.js sangat bergantung pada DOM canvas element yang tidak ada di server Node.js. Dynamic import mencegah error build/compilation.
+- Menyimpan JSON canvas memberi fleksibilitas untuk membuka kembali editor dan melanjutkan pengeditan (canvas layer tetap dapat dimanipulasi), sedangkan flat image akan menyatukan seluruh layer secara permanen.
+- Mobile browser di Android/iOS dapat crash jika memproses canvas resolusi tinggi secara terus menerus. Pembatasan dimensi canvas dan kompresi meminimalkan memory footprint.
+
+### Trade-offs
+- Dependency pada browser API: Proses resize dan kompresi dilakukan di browser, sehingga jika browser client sangat tua/tidak mendukung Canvas, fitur upload mungkin gagal (trade-off yang wajar untuk Next.js app modern).
+- Versi Fabric.js: Mengunci versi `fabric` ke `^5.5.2` (v5) untuk kestabilan dengan ekosistem React 19 / Next.js 16, karena v6 memperkenalkan perubahan API yang signifikan yang belum sepenuhnya didukung type definitions pihak ketiga.
