@@ -1,0 +1,4 @@
+'use client'
+import { useState } from 'react'
+type Props={summary:string}
+export default function POShareActions({summary}:Props){const[notice,setNotice]=useState('');const copy=async(text:string,label:string)=>{await navigator.clipboard.writeText(text);setNotice(`${label} disalin.`)};const link=typeof window==='undefined'?'':window.location.href;return <div className="flex flex-wrap gap-2" aria-live="polite"><button type="button" onClick={()=>copy(summary,'Ringkasan')} className="rounded border px-3 py-2 text-sm">Salin ringkasan</button><button type="button" onClick={()=>copy(link,'Link')} className="rounded border px-3 py-2 text-sm">Salin link</button><a className="rounded bg-green-600 px-3 py-2 text-sm text-white" href={`https://wa.me/?text=${encodeURIComponent(`${summary}\n${link}`)}`} target="_blank" rel="noreferrer">Bagikan WhatsApp</a>{notice&&<span className="self-center text-sm">{notice}</span>}</div>}
