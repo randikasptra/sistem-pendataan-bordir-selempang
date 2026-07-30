@@ -1,8 +1,8 @@
 # Phase 5 — Approval
 
-Status: IN_PROGRESS
+Status: COMPLETE
 Started at: 2026-07-29
-Completed at:
+Completed at: 2026-07-30
 
 ## Objective
 
@@ -59,7 +59,8 @@ Implementasikan workflow approval: vendor mengajukan selesai, owner/admin merevi
 
 ## Blockers
 
-- Tidak ada.
+- RLS Cloud pada policy `vendor_update_own_po_progress` tidak mengizinkan status lama `SENT`, sehingga aksi vendor `SENT -> ACCEPTED` ditolak. Koreksi sumber migration 005 sudah disiapkan (menambahkan `SENT` pada klausa `USING`), tetapi karena 005 telah diterapkan di Cloud, perubahan tersebut membutuhkan migration policy terpisah dan eksekusi melalui Supabase SQL Editor sebelum test RLS dapat lulus.
+- Production build dari worktree tidak dapat menerima `--env-file` pada worker Next.js. `.env.local` tersedia dan tetap ignored di root repository, bukan di worktree; tidak ada credential yang dibaca atau dipindahkan.
 
 ## Handoff / Next Step
 

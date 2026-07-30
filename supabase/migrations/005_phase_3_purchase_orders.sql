@@ -1,6 +1,7 @@
 -- Phase 3: Purchase Orders Schema and RLS
 
 -- Enum types
+do $$ begin
 create type public.po_status as enum (
   'DRAFT',
   'SENT',
@@ -12,7 +13,9 @@ create type public.po_status as enum (
   'COMPLETED',
   'CANCELLED'
 );
+exception when duplicate_object then null; end $$;
 
+do $$ begin
 create type public.attachment_type as enum (
   'reference',
   'overlay',
@@ -20,12 +23,15 @@ create type public.attachment_type as enum (
   'vendor_result',
   'revision_annotation'
 );
+exception when duplicate_object then null; end $$;
 
+do $$ begin
 create type public.approval_status as enum (
   'pending',
   'approved',
   'revision_requested'
 );
+exception when duplicate_object then null; end $$;
 
 -- Purchase Orders table
 create table if not exists public.purchase_orders (
@@ -33,15 +39,15 @@ create table if not exists public.purchase_orders (
   po_number text not null unique,
   vendor_id uuid not null references public.vendors(id) on delete restrict,
   status public.po_status not null default 'DRAFT',
-  po_deadline timestamptz nullable,
+  po_deadline timestamptz,
   version_number integer not null default 1,
-  notes text nullable,
+  notes text,
   created_by uuid not null references public.profiles(id) on delete restrict,
-  approved_by uuid nullable references public.profiles(id) on delete set null,
-  approved_at timestamptz nullable,
-  cancelled_by uuid nullable references public.profiles(id) on delete set null,
-  cancelled_at timestamptz nullable,
-  cancellation_reason text nullable,
+  approved_by uuid references public.profiles(id) on delete set null,
+  approved_at timestamptz,
+  cancelled_by uuid references public.profiles(id) on delete set null,
+  cancelled_at timestamptz,
+  cancellation_reason text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
 
@@ -62,9 +68,9 @@ create table if not exists public.po_items (
   title text not null,
   quantity integer not null check (quantity >= 1),
   completed_quantity integer not null default 0 check (completed_quantity >= 0),
-  item_deadline timestamptz nullable,
-  specifications jsonb nullable,
-  notes text nullable,
+  item_deadline timestamptz,
+  specifications jsonb,
+  notes text,
   sort_order integer not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -79,7 +85,7 @@ create index idx_po_items_sort_order on public.po_items(po_id, sort_order);
 create table if not exists public.attachments (
   id uuid primary key default gen_random_uuid(),
   po_id uuid not null references public.purchase_orders(id) on delete cascade,
-  item_id uuid nullable references public.po_items(id) on delete cascade,
+  item_id uuid references public.po_items(id) on delete cascade,
   type public.attachment_type not null,
   storage_path text not null,
   mime_type text not null,
@@ -101,7 +107,7 @@ create table if not exists public.design_versions (
   item_id uuid not null references public.po_items(id) on delete cascade,
   version integer not null,
   canvas_json jsonb not null,
-  preview_attachment_id uuid nullable references public.attachments(id) on delete set null,
+  preview_attachment_id uuid references public.attachments(id) on delete set null,
   created_by uuid not null references public.profiles(id) on delete restrict,
   created_at timestamptz not null default now(),
 
@@ -116,11 +122,11 @@ create table if not exists public.approval_requests (
   po_id uuid not null references public.purchase_orders(id) on delete cascade,
   requested_by uuid not null references public.profiles(id) on delete restrict,
   status public.approval_status not null default 'pending',
-  vendor_note text nullable,
-  review_note text nullable,
-  reviewed_by uuid nullable references public.profiles(id) on delete set null,
+  vendor_note text,
+  review_note text,
+  reviewed_by uuid references public.profiles(id) on delete set null,
   requested_at timestamptz not null default now(),
-  reviewed_at timestamptz nullable,
+  reviewed_at timestamptz,
 
   constraint reviewed_requires_reviewed_at check ((reviewed_by is not null) = (reviewed_at is not null))
 );
@@ -132,9 +138,9 @@ create index idx_approval_requests_status on public.approval_requests(status);
 create table if not exists public.revision_notes (
   id uuid primary key default gen_random_uuid(),
   po_id uuid not null references public.purchase_orders(id) on delete cascade,
-  item_id uuid nullable references public.po_items(id) on delete set null,
+  item_id uuid references public.po_items(id) on delete set null,
   note text not null,
-  annotated_attachment_id uuid nullable references public.attachments(id) on delete set null,
+  annotated_attachment_id uuid references public.attachments(id) on delete set null,
   created_by uuid not null references public.profiles(id) on delete restrict,
   created_at timestamptz not null default now()
 );
@@ -161,10 +167,10 @@ create index idx_po_versions_po_id on public.po_versions(po_id);
 -- Activity Logs table (append-only)
 create table if not exists public.activity_logs (
   id uuid primary key default gen_random_uuid(),
-  po_id uuid nullable references public.purchase_orders(id) on delete cascade,
+  po_id uuid references public.purchase_orders(id) on delete cascade,
   actor_id uuid not null references public.profiles(id) on delete restrict,
   action text not null,
-  metadata jsonb nullable,
+  metadata jsonb,
   created_at timestamptz not null default now()
 );
 
@@ -179,9 +185,9 @@ create table if not exists public.notifications (
   type text not null,
   title text not null,
   body text not null,
-  entity_type text nullable,
-  entity_id uuid nullable,
-  read_at timestamptz nullable,
+  entity_type text,
+  entity_id uuid,
+  read_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -306,7 +312,7 @@ create policy "vendor_update_own_po_progress" on public.purchase_orders for upda
 using (
   public.current_user_role() = 'vendor'
   and vendor_id = public.current_user_vendor_id()
-  and status in ('ACCEPTED', 'IN_PROGRESS', 'REVISION')
+  and status in ('SENT', 'ACCEPTED', 'IN_PROGRESS', 'REVISION')
 )
 with check (
   public.current_user_role() = 'vendor'
