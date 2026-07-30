@@ -214,7 +214,7 @@ begin
   v_sequence := nextval('public.po_number_sequence');
 
   -- Format: PO-YYYY-MM-DD-NNN
-  v_po_number := format('PO-%s-%03s', to_char(v_today, 'YYYY-MM-DD'), v_sequence);
+  v_po_number := 'PO-' || to_char(v_today, 'YYYY-MM-DD') || '-' || to_char(v_sequence, 'FM000');
 
   return v_po_number;
 end;
