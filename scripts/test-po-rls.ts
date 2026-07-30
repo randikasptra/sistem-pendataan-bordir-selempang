@@ -26,6 +26,8 @@ async function signedIn(email: string, password: string) {
 
 async function main() {
   const token = randomUUID().replaceAll('-', '')
+  const poSuffixA = String(Math.floor(Math.random() * 900) + 100)
+  const poSuffixB = String(Math.floor(Math.random() * 900) + 100)
   let vendorAId: string | undefined,
     vendorBId: string | undefined,
     userAId: string | undefined,
@@ -111,6 +113,7 @@ async function main() {
     const { data: poA, error: poAError } = await admin
       .from('purchase_orders')
       .insert({
+        po_number: `PO-2026-07-29-${poSuffixA}`,
         vendor_id: vendorAId,
         status: 'SENT',
         created_by: ownerProfile.id,
@@ -134,6 +137,7 @@ async function main() {
     const { data: poB, error: poBError } = await admin
       .from('purchase_orders')
       .insert({
+        po_number: `PO-2026-07-29-${poSuffixB}`,
         vendor_id: vendorBId,
         status: 'SENT',
         created_by: ownerProfile.id,

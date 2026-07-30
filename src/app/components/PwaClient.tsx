@@ -1,0 +1,4 @@
+'use client'
+import { useEffect, useSyncExternalStore } from 'react'
+const subscribe=(notify:()=>void)=>{addEventListener('online',notify);addEventListener('offline',notify);return()=>{removeEventListener('online',notify);removeEventListener('offline',notify)}}
+export default function PwaClient(){const online=useSyncExternalStore(subscribe,()=>navigator.onLine,()=>true);useEffect(()=>{const block=(event:Event)=>{if(!navigator.onLine){event.preventDefault();alert('Anda offline. Hubungkan kembali internet sebelum menyimpan perubahan.')}};document.addEventListener('submit',block,true);if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>undefined);return()=>document.removeEventListener('submit',block,true)},[]);return online?null:<div role="status" className="fixed inset-x-0 top-0 z-50 bg-amber-500 p-2 text-center text-sm text-black">Offline: perubahan data dinonaktifkan sampai koneksi kembali.</div>}

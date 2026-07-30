@@ -14,6 +14,7 @@ export default async function AppLayout({
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Purchase Orders', href: '/po' },
     { name: 'Approval', href: '/approvals' },
+    { name: 'Notifikasi', href: '/notifications' },
     { name: 'Vendors', href: '/vendors' },
     { name: 'Users', href: '/users' },
     { name: 'Settings', href: '/settings' },
@@ -22,6 +23,7 @@ export default async function AppLayout({
   const vendorNavigation = [
     { name: 'Dashboard', href: '/vendor/dashboard' },
     { name: 'PO Saya', href: '/vendor/po' },
+    { name: 'Notifikasi', href: '/notifications' },
     { name: 'Riwayat', href: '/vendor/history' },
   ]
 

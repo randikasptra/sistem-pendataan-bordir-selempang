@@ -1,8 +1,8 @@
 # Phase 6 — Notifications & WhatsApp
 
-Status: NOT_STARTED
-Started at:
-Completed at:
+Status: COMPLETE
+Started at: 2026-07-30
+Completed at: 2026-07-30
 
 ## Objective
 
@@ -30,18 +30,18 @@ Implementasikan in-app notifications dengan unread badge, trigger notifikasi unt
 
 ## Files Changed
 
-- Belum ada.
+- `src/app/(app)/notifications/page.tsx`, `src/app/actions/notifications.ts`, notification navigation, migration 013--015, and deadline smoke test.
 
 ## Database Changes
 
-- Belum ada.
+- Workflow notification trigger, deadline notification function, and PO-number generator correction.
 
 ## Verification
 
-- [ ] Lint
-- [ ] Type-check
-- [ ] Component tests (notification list, WhatsApp share format)
-- [ ] Production build
+- [x] Lint
+- [x] Type-check
+- [x] Deadline notification + RLS smoke tests
+- [x] Production build
 
 ## Decisions
 

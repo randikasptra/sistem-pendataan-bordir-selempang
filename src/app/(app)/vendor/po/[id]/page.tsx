@@ -12,6 +12,7 @@ import {
 import { acceptPO, updateItemProgress, submitPOForApproval } from '@/app/actions/po'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import POShareActions from '@/app/components/POShareActions'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -71,6 +72,7 @@ export default async function VendorPODetailPage({ params }: PageProps) {
                 {getStatusLabel(po.status)}
               </span>
             </div>
+            <POShareActions summary={`PO ${po.po_number} · Status ${getStatusLabel(po.status)} · Deadline ${formatDate(po.po_deadline)}`} />
 
             <div className="space-y-3 text-sm">
               <div>
